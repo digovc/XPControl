@@ -8,9 +8,9 @@ With this little interface now you can add more reliability to your fly, making 
 
 # Requeriments:
 
-- Windows platform
-- X-Plane 11
-- .Net Framework 4.7.1
+- Windows platform;
+- X-Plane 11;
+- .Net Framework 4.7.1;
 
 # Instalation:
 
