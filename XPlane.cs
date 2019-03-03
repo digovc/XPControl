@@ -40,7 +40,7 @@ namespace XPControl
 
                 _connector.Start();
 
-                _connector.SetDataRefValue("sim/operation/override/override_joystick", 1);
+                SendDataRef("sim/operation/override/override_joystick", 1);
             });
         }
 
@@ -48,7 +48,8 @@ namespace XPControl
         {
             await Task.Run(() =>
             {
-                _connector.SetDataRefValue("sim/operation/override/override_joystick", 0);
+                SendDataRef("sim/joystick/yoke_heading_ratio", 0);
+                SendDataRef("sim/operation/override/override_joystick", 0);
 
                 _connector.Stop();
             });
