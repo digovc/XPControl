@@ -13,6 +13,14 @@ namespace XPControl
         private static float _lastPositionRoll;
         private static bool _running;
 
+        internal static async void ResetHeadingAsync()
+        {
+            await Task.Run(() =>
+            {
+                SendDataRef("sim/joystick/yoke_heading_ratio", 0);
+            });
+        }
+
         internal static async void SendInputAsync()
         {
             if (!_running)
@@ -48,7 +56,6 @@ namespace XPControl
         {
             await Task.Run(() =>
             {
-                SendDataRef("sim/joystick/yoke_heading_ratio", 0);
                 SendDataRef("sim/operation/override/override_joystick", 0);
 
                 _connector.Stop();

@@ -114,6 +114,11 @@ namespace XPControl
 
             if (e.isCtrlPressed)
             {
+                if (Control)
+                {
+                    XPlane.ResetHeadingAsync();
+                }
+
                 Control = !Control;
             }
 
