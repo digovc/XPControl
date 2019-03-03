@@ -4,7 +4,7 @@
 
 The default mouse control of airplane in X-Plane 11 is limited. The box to interact with the controls is small and appear every time you don't need him.
 
-With this little interface now you can add more reliability to your fly, making fine adjust of sensibility in all axes: heading, pitch and roll.
+With this little interface now you can add more reliability to your fly, making fine adjust of sensibility in all axes (heading, pitch and roll).
 
 # Requeriments:
 
