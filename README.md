@@ -18,6 +18,6 @@ Just download a last release version, decompress the **XPControl.zip** file in a
 
 # How to use:
 
-With **XPControl.exe** running, configure the IP and port where X-Plane is running and click in **Active** button to start communication between this application and the X-Plane.
+With **XPControl.exe** running, configure the IP and port where X-Plane is running and click in **Active** button to start communication between the application and X-Plane.
 
 Press **Control** key in your keyboard to move pedals (heading) or **Shift** key to move yoke (pitch and roll). Press the respective key again to release the control. Just it.
