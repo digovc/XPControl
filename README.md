@@ -14,7 +14,7 @@ With this little interface now you can add more reliability to your fly, making 
 
 # Installation:
 
-Just download a last release version, decompress the **XPControl.zip** file in any folder of your choice and execute the **XPControl.exe** with X-Plane open.
+Just download the [last release](https://github.com/digovc/XPControl/releases/latest) version, decompress the **XPControl.zip** file in any folder of your choice and execute the **XPControl.exe** with X-Plane open.
 
 # How to use:
 
