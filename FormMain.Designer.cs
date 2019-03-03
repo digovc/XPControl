@@ -41,14 +41,14 @@
             this.pnlPort = new System.Windows.Forms.Panel();
             this.txtPort = new System.Windows.Forms.TextBox();
             this.lblPort = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.pnlAddress = new System.Windows.Forms.Panel();
             this.txtAddress = new System.Windows.Forms.TextBox();
             this.lblAddress = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.pnlCommand = new System.Windows.Forms.Panel();
             this.btnActive = new System.Windows.Forms.Button();
             this.btnDeactivate = new System.Windows.Forms.Button();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
             this.pnlConfig.SuspendLayout();
             this.pnlPitch.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.tkbPitch)).BeginInit();
@@ -197,6 +197,14 @@
             this.lblPort.Text = "Port:";
             this.lblPort.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // panel2
+            // 
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 25);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(374, 5);
+            this.panel2.TabIndex = 3;
+            // 
             // pnlAddress
             // 
             this.pnlAddress.Controls.Add(this.txtAddress);
@@ -227,6 +235,14 @@
             this.lblAddress.Text = "Address IP:";
             this.lblAddress.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // panel1
+            // 
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 25);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(374, 5);
+            this.panel1.TabIndex = 2;
+            // 
             // pnlCommand
             // 
             this.pnlCommand.Controls.Add(this.btnActive);
@@ -246,6 +262,7 @@
             this.btnActive.TabIndex = 0;
             this.btnActive.Text = "Active";
             this.btnActive.UseVisualStyleBackColor = true;
+            this.btnActive.Click += new System.EventHandler(this.btnActive_Click);
             // 
             // btnDeactivate
             // 
@@ -257,22 +274,7 @@
             this.btnDeactivate.Text = "Deactivate";
             this.btnDeactivate.UseVisualStyleBackColor = true;
             this.btnDeactivate.Visible = false;
-            // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 25);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(374, 5);
-            this.panel1.TabIndex = 2;
-            // 
-            // panel2
-            // 
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 25);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(374, 5);
-            this.panel2.TabIndex = 3;
+            this.btnDeactivate.Click += new System.EventHandler(this.btnDeactivate_Click);
             // 
             // FormMain
             // 
@@ -283,7 +285,6 @@
             this.Controls.Add(this.pnlConfig);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "FormMain";
             this.Padding = new System.Windows.Forms.Padding(5);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

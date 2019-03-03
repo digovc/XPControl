@@ -14,9 +14,6 @@ namespace XPControl
         {
             InitializeComponent();
 
-            Input.InitializeAsync();
-            XPlane.InitializeAsync();
-
             LoadConfiguration();
         }
 
@@ -25,6 +22,24 @@ namespace XPControl
             base.OnClosing(e);
 
             SaveConfiguration();
+        }
+
+        private void btnActive_Click(object sender, EventArgs e)
+        {
+            Input.StartAsync();
+            XPlane.StartAsync();
+
+            this.btnActive.Visible = false;
+            this.btnDeactivate.Visible = true;
+        }
+
+        private void btnDeactivate_Click(object sender, EventArgs e)
+        {
+            Input.StopAsync();
+            XPlane.StopAsync();
+
+            this.btnActive.Visible = true;
+            this.btnDeactivate.Visible = false;
         }
 
         private double GetDoubleConfiguration(string name)

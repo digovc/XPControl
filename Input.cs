@@ -16,9 +16,12 @@ namespace XPControl
         private static bool _calculing;
         private static Hook _hook = new Hook("XPControl");
         private static Point _lastPosition;
+        private static bool _running;
 
-        internal static async void InitializeAsync()
+        internal static async void StartAsync()
         {
+            _running = true;
+
             await Task.Run(() =>
             {
                 _hook.KeyDownEvent += KeyDownEvent;
@@ -26,8 +29,25 @@ namespace XPControl
             });
         }
 
+        internal static async void StopAsync()
+        {
+            await Task.Run(() =>
+            {
+                _running = false;
+
+                _hook.KeyDownEvent -= KeyDownEvent;
+                _hook.KeyUpEvent -= KeyUpEvent;
+            });
+        }
+
         private static async void CalculateAsync()
         {
+            if (!_running)
+            {
+                StopAsync();
+                return;
+            }
+
             await Task.Run(() =>
             {
                 while (Control || Shift)
@@ -49,6 +69,12 @@ namespace XPControl
 
         private static void KeyDownEvent(KeyboardHookEventArgs e)
         {
+            if (!_running)
+            {
+                StopAsync();
+                return;
+            }
+
             Control = e.isCtrlPressed;
             Shift = e.isShiftPressed;
 
@@ -64,6 +90,12 @@ namespace XPControl
 
         private static void KeyUpEvent(KeyboardHookEventArgs e)
         {
+            if (!_running)
+            {
+                StopAsync();
+                return;
+            }
+
             if (Control && e.isCtrlPressed)
             {
                 Control = false;
