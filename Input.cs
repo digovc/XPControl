@@ -1,5 +1,4 @@
 ﻿using FMUtils.KeyboardHook;
-using System;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,13 +8,14 @@ namespace XPControl
 {
     internal abstract class Input
     {
-        internal static double MovementX;
-        internal static double MovementY;
-        private static bool _control;
+        internal static bool Control;
+        internal static float PositionX;
+        internal static float PositionY;
+        internal static bool Shift;
+
+        private static bool _calculing;
         private static Hook _hook = new Hook("XPControl");
         private static Point _lastPosition;
-        private static bool _shift;
-        private static Point _startPosition;
 
         internal static async void InitializeAsync()
         {
@@ -30,54 +30,54 @@ namespace XPControl
         {
             await Task.Run(() =>
             {
-                while (_control || _shift)
+                while (Control || Shift)
                 {
                     var position = Cursor.Position;
 
                     if (position.X != _lastPosition.X || position.Y != _lastPosition.Y)
                     {
-                        MovementX = (double)(position.X - _startPosition.X) / Screen.PrimaryScreen.Bounds.Width;
-                        MovementY = (double)(position.Y - _startPosition.Y) / Screen.PrimaryScreen.Bounds.Height;
+                        PositionX = (float)position.X / Screen.PrimaryScreen.Bounds.Width * 2f - 1f;
+                        PositionY = (float)position.Y / Screen.PrimaryScreen.Bounds.Height * 2f - 1f;
 
                         _lastPosition = position;
-
-                        Console.WriteLine(MovementX + "x" + MovementY);
                     }
 
-                    Thread.Sleep(15);
+                    Thread.Sleep(50);
                 }
             });
         }
 
         private static void KeyDownEvent(KeyboardHookEventArgs e)
         {
-            if (_control || _shift)
-            {
-                return;
-            }
+            Control = e.isCtrlPressed;
+            Shift = e.isShiftPressed;
 
-            _control = e.isCtrlPressed;
-            _shift = e.isShiftPressed;
-
-            if (_control || _shift)
+            if (Control || Shift && !_calculing)
             {
-                _startPosition = Cursor.Position;
-                _lastPosition = Cursor.Position;
+                _calculing = true;
 
                 CalculateAsync();
 
-                Console.WriteLine("started");
+                XPlane.SendInputAsync();
             }
         }
 
         private static void KeyUpEvent(KeyboardHookEventArgs e)
         {
-            _control = false;
-            _shift = false;
+            if (Control && e.isCtrlPressed)
+            {
+                Control = false;
+            }
 
-            MovementX = 0;
-            MovementY = 0;
-            Console.WriteLine("stopped");
+            if (Shift && e.isShiftPressed)
+            {
+                Shift = false;
+            }
+
+            if (!Control && !Shift)
+            {
+                _calculing = false;
+            }
         }
     }
 }
