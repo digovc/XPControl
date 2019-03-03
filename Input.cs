@@ -97,8 +97,8 @@ namespace XPControl
             if (position.X != _lastPosition.X || position.Y != _lastPosition.Y)
             {
                 PositionHeading = CalculateHeading(position.X, _halfWidth, SensibilityHeading);
-                PositionRoll = CalculateHeading(position.Y, _halfHeight, SensibilityRoll);
-                PositionPitch = CalculateHeading(position.X, _halfWidth, SensibilityPitch);
+                PositionRoll = CalculateHeading(position.X, _halfWidth, SensibilityRoll);
+                PositionPitch = CalculateHeading(position.Y, _halfHeight, SensibilityPitch);
 
                 _lastPosition = position;
             }
