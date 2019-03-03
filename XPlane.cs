@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace XPControl
@@ -7,9 +8,9 @@ namespace XPControl
     {
         private static XPlaneConnector.XPlaneConnector _connector = new XPlaneConnector.XPlaneConnector();
 
-        private static float _lastPositionControlX;
-        private static float _lastPositionShiftX;
-        private static float _lastPositionY;
+        private static float _lastPositionHeading;
+        private static float _lastPositionPitch;
+        private static float _lastPositionRoll;
         private static bool _running;
 
         internal static async void SendInputAsync()
@@ -53,6 +54,12 @@ namespace XPControl
             });
         }
 
+        private static void SendDataRef(string name, float value)
+        {
+            _connector.SetDataRefValue(name, value);
+            Console.WriteLine($"Sending: {name} {value}");
+        }
+
         private static void SendInputLoop()
         {
             SendInputLoopHeading();
@@ -64,28 +71,28 @@ namespace XPControl
 
         private static void SendInputLoopHeading()
         {
-            if (Input.Control && _lastPositionControlX != Input.PositionX)
+            if (Input.Control && _lastPositionHeading != Input.PositionHeading)
             {
-                _connector.SetDataRefValue("sim/joystick/yoke_heading_ratio", Input.PositionX);
-                _lastPositionControlX = Input.PositionX;
+                SendDataRef("sim/joystick/yoke_heading_ratio", Input.PositionHeading);
+                _lastPositionHeading = Input.PositionHeading;
             }
         }
 
         private static void SendInputLoopPitch()
         {
-            if (Input.Shift && _lastPositionY != Input.PositionY)
+            if (Input.Shift && _lastPositionPitch != Input.PositionPitch)
             {
-                _connector.SetDataRefValue("sim/joystick/yoke_pitch_ratio", Input.PositionY);
-                _lastPositionY = Input.PositionY;
+                SendDataRef("sim/joystick/yoke_pitch_ratio", Input.PositionPitch);
+                _lastPositionPitch = Input.PositionPitch;
             }
         }
 
         private static void SendInputLoopRoll()
         {
-            if (Input.Shift && _lastPositionShiftX != Input.PositionX)
+            if (Input.Shift && _lastPositionRoll != Input.PositionRoll)
             {
-                _connector.SetDataRefValue("sim/joystick/yoke_roll_ratio", Input.PositionX);
-                _lastPositionShiftX = Input.PositionX;
+                SendDataRef("sim/joystick/yoke_roll_ratio", Input.PositionRoll);
+                _lastPositionRoll = Input.PositionRoll;
             }
         }
     }

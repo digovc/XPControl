@@ -1,4 +1,5 @@
 ﻿using FMUtils.KeyboardHook;
+using System;
 using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,10 +10,15 @@ namespace XPControl
     internal abstract class Input
     {
         internal static bool Control;
-        internal static float PositionX;
-        internal static float PositionY;
+        internal static float PositionHeading;
+        internal static float PositionPitch;
+        internal static float PositionRoll;
+        internal static float SensibilityHeading = .75f;
+        internal static float SensibilityPitch = .75f;
+        internal static float SensibilityRoll = .75f;
         internal static bool Shift;
-
+        private static readonly int _halfHeight = Screen.PrimaryScreen.Bounds.Height / 2;
+        private static readonly int _halfWidth = Screen.PrimaryScreen.Bounds.Width / 2;
         private static bool _calculing;
         private static Hook _hook = new Hook("XPControl");
         private static Point _lastPosition;
@@ -24,7 +30,6 @@ namespace XPControl
 
             await Task.Run(() =>
             {
-                _hook.KeyDownEvent += KeyDownEvent;
                 _hook.KeyUpEvent += KeyUpEvent;
             });
         }
@@ -35,13 +40,21 @@ namespace XPControl
             {
                 _running = false;
 
-                _hook.KeyDownEvent -= KeyDownEvent;
                 _hook.KeyUpEvent -= KeyUpEvent;
             });
         }
 
         private static async void CalculateAsync()
         {
+            if (_calculing)
+            {
+                return;
+            }
+
+            _calculing = true;
+
+            Console.WriteLine("Calculating");
+
             if (!_running)
             {
                 StopAsync();
@@ -50,41 +63,44 @@ namespace XPControl
 
             await Task.Run(() =>
             {
-                while (Control || Shift)
+                while (_running && (Control || Shift))
                 {
-                    var position = Cursor.Position;
-
-                    if (position.X != _lastPosition.X || position.Y != _lastPosition.Y)
-                    {
-                        PositionX = (float)position.X / Screen.PrimaryScreen.Bounds.Width * 2f - 1f;
-                        PositionY = (float)position.Y / Screen.PrimaryScreen.Bounds.Height * 2f - 1f;
-
-                        _lastPosition = position;
-                    }
+                    CalculateLoop();
 
                     Thread.Sleep(50);
                 }
             });
+
+            _calculing = false;
         }
 
-        private static void KeyDownEvent(KeyboardHookEventArgs e)
+        private static float CalculateHeading(int actualPosition, int half, float sensibility)
         {
-            if (!_running)
+            if (actualPosition > half)
             {
-                StopAsync();
-                return;
+                return Math.Min((float)(actualPosition - half) / half * sensibility, 1);
             }
-
-            Control = e.isCtrlPressed;
-            Shift = e.isShiftPressed;
-
-            if (Control || Shift && !_calculing)
+            else if (actualPosition < half)
             {
-                _calculing = true;
+                return Math.Min((float)(half - actualPosition) / half * sensibility, 1) * -1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
 
-                CalculateAsync();
+        private static void CalculateLoop()
+        {
+            var position = Cursor.Position;
 
-                XPlane.SendInputAsync();
+            if (position.X != _lastPosition.X || position.Y != _lastPosition.Y)
+            {
+                PositionHeading = CalculateHeading(position.X, _halfWidth, SensibilityHeading);
+                PositionRoll = CalculateHeading(position.Y, _halfHeight, SensibilityRoll);
+                PositionPitch = CalculateHeading(position.X, _halfWidth, SensibilityPitch);
+
+                _lastPosition = position;
             }
         }
 
@@ -96,19 +112,21 @@ namespace XPControl
                 return;
             }
 
-            if (Control && e.isCtrlPressed)
+            if (e.isCtrlPressed)
             {
-                Control = false;
+                Control = !Control;
             }
 
-            if (Shift && e.isShiftPressed)
+            if (e.isShiftPressed)
             {
-                Shift = false;
+                Shift = !Shift;
             }
 
-            if (!Control && !Shift)
+            if (Control || Shift)
             {
-                _calculing = false;
+                CalculateAsync();
+
+                XPlane.SendInputAsync();
             }
         }
     }

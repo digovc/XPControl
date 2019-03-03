@@ -91,9 +91,11 @@
             this.tkbPitch.Maximum = 100;
             this.tkbPitch.Name = "tkbPitch";
             this.tkbPitch.Size = new System.Drawing.Size(224, 30);
+            this.tkbPitch.SmallChange = 10;
             this.tkbPitch.TabIndex = 2;
-            this.tkbPitch.TickFrequency = 0;
+            this.tkbPitch.TickFrequency = 10;
             this.tkbPitch.Value = 75;
+            this.tkbPitch.Scroll += new System.EventHandler(this.tkbPitch_Scroll);
             // 
             // lblPitch
             // 
@@ -122,9 +124,11 @@
             this.tkbRoll.Maximum = 100;
             this.tkbRoll.Name = "tkbRoll";
             this.tkbRoll.Size = new System.Drawing.Size(224, 30);
+            this.tkbRoll.SmallChange = 10;
             this.tkbRoll.TabIndex = 2;
-            this.tkbRoll.TickFrequency = 0;
+            this.tkbRoll.TickFrequency = 10;
             this.tkbRoll.Value = 75;
+            this.tkbRoll.Scroll += new System.EventHandler(this.tkbRoll_Scroll);
             // 
             // lblRoll
             // 
@@ -153,9 +157,11 @@
             this.tkbHeading.Maximum = 100;
             this.tkbHeading.Name = "tkbHeading";
             this.tkbHeading.Size = new System.Drawing.Size(224, 30);
+            this.tkbHeading.SmallChange = 10;
             this.tkbHeading.TabIndex = 2;
-            this.tkbHeading.TickFrequency = 0;
+            this.tkbHeading.TickFrequency = 10;
             this.tkbHeading.Value = 75;
+            this.tkbHeading.Scroll += new System.EventHandler(this.tkbHeading_Scroll);
             // 
             // lblHeading
             // 

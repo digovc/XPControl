@@ -42,6 +42,11 @@ namespace XPControl
             this.btnDeactivate.Visible = false;
         }
 
+        private float CalculateSensibility(int value)
+        {
+            return value / 100f + .5f + 1f;
+        }
+
         private double GetDoubleConfiguration(string name)
         {
             var value = ConfigurationManager.AppSettings[name];
@@ -75,6 +80,21 @@ namespace XPControl
         {
             config.AppSettings.Settings.Remove(name);
             config.AppSettings.Settings.Add(name, value);
+        }
+
+        private void tkbHeading_Scroll(object sender, EventArgs e)
+        {
+            Input.SensibilityHeading = CalculateSensibility(this.tkbHeading.Value);
+        }
+
+        private void tkbPitch_Scroll(object sender, EventArgs e)
+        {
+            Input.SensibilityPitch = CalculateSensibility(this.tkbPitch.Value);
+        }
+
+        private void tkbRoll_Scroll(object sender, EventArgs e)
+        {
+            Input.SensibilityRoll = CalculateSensibility(this.tkbRoll.Value);
         }
     }
 }
