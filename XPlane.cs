@@ -12,8 +12,19 @@ namespace XPControl
         private static float _lastPositionRoll;
         private static bool _running;
 
-        internal static void ChangeThrottle(double value)
+        internal static void ChangeThrottle(short delta)
         {
+            var command = XPlaneConnector.Commands.EnginesThrottleUp;
+
+            if (delta < 0)
+            {
+                command = XPlaneConnector.Commands.EnginesThrottleDown;
+            }
+
+            for (int i = 0; i < Math.Abs(delta); i++)
+            {
+                _connector.SendCommand(command);
+            }
         }
 
         internal static void ResetHeading()

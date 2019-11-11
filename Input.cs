@@ -47,7 +47,10 @@ namespace XPControl
                 PositionHeading = CalculateHeading(position.X, _halfWidth, SensibilityHeading);
                 PositionRoll = CalculateHeading(position.X, _halfWidth, SensibilityRoll);
                 PositionPitch = CalculateHeading(position.Y, _halfHeight, SensibilityPitch);
+
                 _lastPosition = position;
+
+                XPlane.SendInput();
             }
         }
 
@@ -99,7 +102,6 @@ namespace XPControl
             if (Heading || Yoke)
             {
                 Calculate();
-                XPlane.SendInput();
             }
             else
             {
@@ -111,7 +113,7 @@ namespace XPControl
         {
             if (Heading || Yoke)
             {
-                XPlane.ChangeThrottle(e.Delta * .01);
+                XPlane.ChangeThrottle((short)e.Delta);
             }
         }
 
