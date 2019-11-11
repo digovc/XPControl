@@ -14,6 +14,11 @@ namespace XPControl
 
         internal static void ChangeThrottle(short delta)
         {
+            if (delta == 0)
+            {
+                return;
+            }
+
             var command = XPlaneConnector.Commands.EnginesThrottleUp;
 
             if (delta < 0)
