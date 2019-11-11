@@ -13,7 +13,6 @@ namespace XPControl
         public FormMain()
         {
             InitializeComponent();
-
             LoadConfiguration();
         }
 
