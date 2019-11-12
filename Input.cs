@@ -1,7 +1,6 @@
-﻿using FMUtils.KeyboardHook;
+﻿using Gma.System.MouseKeyHook;
 using System;
 using System.Drawing;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -9,28 +8,23 @@ namespace XPControl
 {
     internal abstract class Input
     {
-        internal static bool Control;
+        internal static bool Heading;
         internal static float PositionHeading;
         internal static float PositionPitch;
         internal static float PositionRoll;
         internal static float SensibilityHeading = .75f;
         internal static float SensibilityPitch = .75f;
         internal static float SensibilityRoll = .75f;
-        internal static bool Shift;
+        internal static bool Yoke;
         private static readonly int _halfHeight = Screen.PrimaryScreen.Bounds.Height / 2;
         private static readonly int _halfWidth = Screen.PrimaryScreen.Bounds.Width / 2;
-        private static bool _calculing;
-        private static Hook _hook = new Hook("XPControl");
         private static Point _lastPosition;
-        private static bool _running;
 
         internal static async void StartAsync()
         {
-            _running = true;
-
             await Task.Run(() =>
             {
-                _hook.KeyUpEvent += KeyUpEvent;
+                Hook.GlobalEvents().MouseClick += MouseClick;
             });
         }
 
@@ -38,40 +32,26 @@ namespace XPControl
         {
             await Task.Run(() =>
             {
-                _running = false;
-
-                _hook.KeyUpEvent -= KeyUpEvent;
+                Hook.GlobalEvents().MouseClick -= MouseClick;
             });
         }
 
-        private static async void CalculateAsync()
+        private static void Calculate()
         {
-            if (_calculing)
-            {
-                return;
-            }
-
-            _calculing = true;
-
             Console.WriteLine("Calculating");
 
-            if (!_running)
+            var position = Cursor.Position;
+
+            if (position.X != _lastPosition.X || position.Y != _lastPosition.Y)
             {
-                StopAsync();
-                return;
+                PositionHeading = CalculateHeading(position.X, _halfWidth, SensibilityHeading);
+                PositionRoll = CalculateHeading(position.X, _halfWidth, SensibilityRoll);
+                PositionPitch = CalculateHeading(position.Y, _halfHeight, SensibilityPitch);
+
+                _lastPosition = position;
+
+                XPlane.SendInput();
             }
-
-            await Task.Run(() =>
-            {
-                while (_running && (Control || Shift))
-                {
-                    CalculateLoop();
-
-                    Thread.Sleep(50);
-                }
-            });
-
-            _calculing = false;
         }
 
         private static float CalculateHeading(int actualPosition, int half, float sensibility)
@@ -90,49 +70,63 @@ namespace XPControl
             }
         }
 
-        private static void CalculateLoop()
+        private static void MouseClick(object sender, MouseEventArgs e)
         {
-            var position = Cursor.Position;
-
-            if (position.X != _lastPosition.X || position.Y != _lastPosition.Y)
+            if (Heading && e.Button == MouseButtons.XButton2)
             {
-                PositionHeading = CalculateHeading(position.X, _halfWidth, SensibilityHeading);
-                PositionRoll = CalculateHeading(position.X, _halfWidth, SensibilityRoll);
-                PositionPitch = CalculateHeading(position.Y, _halfHeight, SensibilityPitch);
+                XPlane.ResetHeading();
+            }
 
-                _lastPosition = position;
+            if (e.Button == MouseButtons.XButton2)
+            {
+                Heading = !Heading;
+            }
+
+            if (e.Button == MouseButtons.XButton1)
+            {
+                Yoke = !Yoke;
+            }
+
+            if (Heading || Yoke)
+            {
+                StartMouseMonitor();
+            }
+            else
+            {
+                StopMouseMonitor();
             }
         }
 
-        private static void KeyUpEvent(KeyboardHookEventArgs e)
+        private static void MouseMove(object sender, MouseEventArgs e)
         {
-            if (!_running)
+            if (Heading || Yoke)
             {
-                StopAsync();
-                return;
+                Calculate();
             }
-
-            if (e.isCtrlPressed)
+            else
             {
-                if (Control)
-                {
-                    XPlane.ResetHeadingAsync();
-                }
-
-                Control = !Control;
+                StopMouseMonitor();
             }
+        }
 
-            if (e.isShiftPressed)
+        private static void MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (Heading || Yoke)
             {
-                Shift = !Shift;
+                XPlane.ChangeThrottle((short)e.Delta);
             }
+        }
 
-            if (Control || Shift)
-            {
-                CalculateAsync();
+        private static void StartMouseMonitor()
+        {
+            Hook.GlobalEvents().MouseMove += MouseMove;
+            Hook.GlobalEvents().MouseWheel += MouseWheel;
+        }
 
-                XPlane.SendInputAsync();
-            }
+        private static void StopMouseMonitor()
+        {
+            Hook.GlobalEvents().MouseMove -= MouseMove;
+            Hook.GlobalEvents().MouseWheel -= MouseWheel;
         }
     }
 }
